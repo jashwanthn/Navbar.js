@@ -1,0 +1,169 @@
+import React from "react";
+import { Link } from "react-router-dom"; 
+import "./Navbar.css";
+
+/*
+  Simple, desktop-only bank website navbar
+  - No flexbox
+  - No :root variables
+  - No mobile view
+  - Uses CSS Grid + inline-block
+  - Professional color theme (deep blue & gold)
+*/
+
+export default function Navbar() {
+  return (
+    <header className="navbar">
+      <div className="navbar-container">
+        
+        {/* Left: Brand */}
+        <div className="navbar-brand">
+          <Link to="/" className="brand-link">
+            <span className="brand-box">GBS</span>
+            <span className="brand-name">Chartered Bank</span>
+          </Link>
+        </div>
+
+        {/* Center: Navigation */}
+        <nav className="navbar-nav">
+          <ul className="nav-items">
+            <li><Link to="/home">Home</Link></li>
+            <li><Link to="/personal">Personal</Link></li>
+            <li><Link to="/business">Business</Link></li>
+            <li><Link to="/wealth">Wealth</Link></li>
+            <li><Link to="/about">About Us</Link></li>
+            <li><Link to="/contact">Contact</Link></li>
+          </ul>
+        </nav>
+
+        {/* Right: Buttons */}
+        <div className="navbar-actions">
+          <Link to="/login" className="btn-outline">Login</Link>
+          <Link to="/open-account" className="btn-primary">Open Account</Link>
+        </div>
+
+      </div>
+    </header>
+  );
+}
+
+
+//Navbar.css
+
+/* Overall Navbar */
+.navbar {
+  width: 100%;
+  background-color: #003366; /* Deep navy blue */
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  font-family: "Segoe UI", Arial, sans-serif;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+/* Grid: Brand | Nav | Actions */
+.navbar-container {
+  display: grid;
+  grid-template-columns: 220px 1fr 260px;
+  align-items: center;
+  height: 70px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Brand Section */
+.brand-link {
+  text-decoration: none;
+  color: #ffffff;
+}
+.brand-box {
+  display: inline-block;
+  background-color: #ffb400; /* Gold accent */
+  color: #003366;            /* Blue text */
+  font-weight: bold;
+  font-size: 16px;
+  padding: 8px 10px;
+  border-radius: 4px;
+  margin-right: 8px;
+}
+.brand-name {
+  font-size: 20px;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+/* Center Navigation */
+.navbar-nav {
+  text-align: center;
+}
+.nav-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.nav-items li {
+  display: inline-block;
+  margin: 0 12px;
+}
+.nav-items a {
+  text-decoration: none;
+  color: #ffffff;
+  font-weight: 500;
+  padding: 6px 4px;
+  border-radius: 4px;
+}
+.nav-items a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: background-color 0.2s ease;
+}
+
+/* Right Buttons */
+.navbar-actions {
+  text-align: right;
+  white-space: nowrap;
+}
+.btn-outline,
+.btn-primary {
+  text-decoration: none;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 4px;
+  margin-left: 10px;
+  display: inline-block;
+  font-size: 15px;
+  letter-spacing: 0.3px;
+}
+.btn-outline {
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+.btn-outline:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+.btn-primary {
+  background-color: #ffb400; /* Gold button */
+  color: #003366;           /* Blue text */
+}
+.btn-primary:hover {
+  background-color: #e6a600;
+}
+
+
+//App.js
+
+
+import Navbar from "./components/Navbar";
+
+function App() {
+  return (
+    <>
+      <Navbar />
+      {/* Your page content here */}
+    </>
+  );
+}
+
+export default App;
+
