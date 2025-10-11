@@ -1,0 +1,149 @@
+1) Global reset (put this in src/index.css or at top of src/App.css — whichever you import globally)
+/* index.css - global reset */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background: #111217; /* keep your dark site background if you want */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ensure all elements use border-box sizing */
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+2) Single-file Header (fixed to top) — src/components/Header.js
+import React from "react";
+import "./Header.css";
+import Navbar from "./Navbar"; // reuse your Navbar component (it should be the desktop-only version)
+
+export default function Header() {
+  return (
+    <>
+      {/* top thin info bar */}
+      <div className="top-bar">
+        <div className="top-bar-inner">
+          <div className="top-left">
+            Call us: <a href="tel:+1800123456" className="top-link">1800-123-456</a> |
+            Email: <a href="mailto:support@gbsbank.com" className="top-link">support@gbsbank.com</a>
+          </div>
+          <div className="top-right">
+            <a href="/careers" className="top-link">Careers</a> |
+            <a href="/help" className="top-link">Help</a> |
+            <a href="/locate" className="top-link">Locate Us</a>
+          </div>
+        </div>
+      </div>
+
+      {/* main navbar fixed below the top bar */}
+      <div className="navbar-fixed-wrapper">
+        <Navbar />
+      </div>
+    </>
+  );
+}
+3) Header CSS — src/components/Header.css
+/* Header.css - resets already handled in index.css */
+
+/* Top thin info bar */
+.top-bar {
+  width: 100%;
+  background-color: #00264d; /* slightly darker than main navy */
+  color: #ffffff;
+  height: 34px;
+  line-height: 34px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  position: fixed;       /* fix to top of viewport */
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 60;
+}
+
+/* center container for top bar content */
+.top-bar-inner {
+  max-width: 1200px;
+  margin: 0 auto;        /* keeps the background full width but centers the content */
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+}
+
+/* top links */
+.top-left { text-align: left; }
+.top-right { text-align: right; }
+.top-link {
+  color: #ffb400;
+  text-decoration: none;
+  margin: 0 6px;
+}
+.top-link:hover { text-decoration: underline; }
+
+/* Wrapper for Navbar placed immediately below top-bar
+   This wrapper makes space in document flow by having the fixed navbar in there visually,
+   but the actual layout spacing is handled by .site-body-padding (see below).
+*/
+.navbar-fixed-wrapper {
+  position: fixed;
+  top: 34px;   /* sits directly under the top-bar */
+  left: 0;
+  right: 0;
+  z-index: 55;
+}
+
+/* IMPORTANT: add top padding to main content so it doesn't go under fixed header.
+   If your site main content is in <main> element, you can add this class to the main wrapper:
+   <main className="site-body-padding"> ... </main>
+*/
+.site-body-padding {
+  padding-top: calc(34px + 70px); /* top_bar (34) + navbar height (70) = space to push content below header */
+}
+
+/* The Navbar component should provide its own inner container styles.
+   Example expectation for your Navbar.css:
+   - navbar (background full width)
+   - navbar-container (max-width centered)
+   Ensure Navbar's outer element has height: 70px; so the calc above is correct.
+*/
+4) Small fixes for Navbar.css (ensure full-width background)
+/* Navbar.css - ensure background covers full viewport width */
+.navbar {
+  width: 100%;
+  background-color: #003366; /* deep navy */
+  color: #fff;
+  height: 70px;
+  margin: 0;                /* crucial - no margins */
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* inner centered container */
+.navbar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 70px;
+  display: grid;
+  grid-template-columns: 220px auto 220px;
+  align-items: center;
+}
+5) Use this in App.js
+import React from "react";
+import Header from "./components/Header";
+import "./index.css"; // ensure the global reset is imported
+
+function App() {
+  return (
+    <>
+      <Header />
+      <main className="site-body-padding">
+        {/* your page content here */}
+      </main>
+    </>
+  );
+}
+
+export default App;
