@@ -1,0 +1,93 @@
+src/components/Header.js
+import React from "react";
+import Navbar from "./Navbar"; // Reuse your existing Navbar
+import "./Header.css";
+
+/*
+  Header Component for the website
+  --------------------------------
+  - Contains a thin top info bar
+  - Reuses the Navbar below
+  - No Flexbox, no :root, no mobile code
+  - Fully desktop layout using inline-block + grid
+*/
+
+export default function Header() {
+  return (
+    <header className="header-section">
+      {/* Top Info Bar */}
+      <div className="top-bar">
+        <div className="top-bar-container">
+          <div className="top-left">
+            Call us: <a href="tel:+1800123456" className="top-link">1800-123-456</a> |
+            Email: <a href="mailto:support@gbsbank.com" className="top-link">support@gbsbank.com</a>
+          </div>
+          <div className="top-right">
+            <a href="/careers" className="top-link">Careers</a> |
+            <a href="/help" className="top-link">Help</a> |
+            <a href="/locate" className="top-link">Locate Us</a>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Navigation */}
+      <Navbar />
+    </header>
+  );
+}
+
+src/components/Header.css
+  /* Top bar styling */
+.top-bar {
+  background-color: #00264d; /* slightly darker blue */
+  color: #ffffff;
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: 14px;
+  height: 34px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Grid layout for top bar */
+.top-bar-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  max-width: 1200px;
+  margin: 0 auto;
+  height: 34px;
+  line-height: 34px;
+  padding: 0 24px;
+}
+
+/* Left and right text sections */
+.top-left {
+  text-align: left;
+}
+.top-right {
+  text-align: right;
+}
+
+/* Top links */
+.top-link {
+  color: #ffb400; /* gold tone */
+  text-decoration: none;
+  margin: 0 4px;
+}
+.top-link:hover {
+  text-decoration: underline;
+}
+
+
+  In your App.js, import and use:
+import Header from "./components/Header";
+
+function App() {
+  return (
+    <>
+      <Header />
+      {/* rest of your website */}
+    </>
+  );
+}
+
+export default App;
+
