@@ -331,3 +331,110 @@ src/components/AccessConfiguration.css
   body:not(.no-sidebar-left) .ac-wrapper { padding-left: 24px; }
   .ac-card { max-width: calc(100% - 40px); }
 }
+
+
+
+✅ Replace your existing Navbar.css with this:
+
+/* Navbar.css — clean layout with resized Standard Chartered logo */
+
+/* Navbar wrapper */
+.navbar {
+  position: fixed;
+  top: 34px; /* adjust if you have a top contact bar above */
+  left: 0;
+  right: 0;
+  height: 70px;
+  background: linear-gradient(90deg, #002147, #003366);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  z-index: 99;
+}
+
+/* Container to align logo, links, and actions */
+.navbar-container {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  height: 100%;
+  padding: 0 40px;
+  box-sizing: border-box;
+}
+
+/* Brand section (logo + text) */
+.navbar-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ✅ Resize logo neatly */
+.img {
+  height: 48px;   /* ← change this to 42px, 45px, or 50px as needed */
+  width: auto;
+  display: block;
+  border-radius: 4px; /* optional soft edges */
+}
+
+/* Brand text */
+.brand-link {
+  font-size: 20px;
+  font-weight: 600;
+  color: #ffffff;
+  text-decoration: none;
+  letter-spacing: 0.4px;
+}
+
+/* Navbar links */
+.navbar-nav {
+  text-align: center;
+}
+.navbar-nav .nav-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.navbar-nav .nav-items li {
+  display: inline-block;
+  margin: 0 18px;
+}
+.navbar-nav .nav-items a {
+  color: #ffffff;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.navbar-nav .nav-items a:hover {
+  color: #ffb400;
+}
+
+/* Action buttons (Login / Open Account) */
+.navbar-actions {
+  text-align: right;
+}
+
+.navbar-actions .btn-login {
+  background: transparent;
+  color: #ffffff;
+  border: 1px solid #ffffff;
+  border-radius: 4px;
+  padding: 6px 14px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+.navbar-actions .btn-login:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.navbar-actions .btn-open-account {
+  background: #ffb400;
+  color: #003366;
+  border: none;
+  border-radius: 4px;
+  padding: 7px 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.navbar-actions .btn-open-account:hover {
+  background: #ffc933;
+}
+
