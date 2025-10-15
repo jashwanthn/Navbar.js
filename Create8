@@ -1,0 +1,196 @@
+Final Sidebar.js (Improved Visual UI)
+import React from "react";
+import { Link } from "react-router-dom";
+import "./Sidebar.css";
+
+export default function Sidebar() {
+  function NavLink({ to, children, className }) {
+    try {
+      return (
+        <Link to={to} className={className}>
+          {children}
+        </Link>
+      );
+    } catch {
+      return (
+        <a href={to} className={className}>
+          {children}
+        </a>
+      );
+    }
+  }
+
+  return (
+    <aside className="sidebar" aria-label="Main sidebar">
+      <div className="sidebar-inner">
+        {/* Sidebar Logo */}
+        <div className="sidebar-logo">
+          <img
+            src={require("../../Data/download.png")}
+            alt="Standard Chartered Logo"
+            className="sidebar-logo-img"
+          />
+          <h3 className="sidebar-title">SC GBS Bank</h3>
+        </div>
+
+        {/* Navigation Links */}
+        <nav className="sidebar-nav" aria-label="Sidebar navigation">
+          <ul className="sidebar-list">
+            <li>
+              <NavLink to="/home" className="sidebar-link">
+                <i className="fas fa-home"></i>
+                <span className="link-text">Home</span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/dashboard" className="sidebar-link">
+                <i className="fas fa-chart-line"></i>
+                <span className="link-text">Dashboard</span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/admin" className="sidebar-link">
+                <i className="fas fa-user-shield"></i>
+                <span className="link-text">Admin</span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/users" className="sidebar-link">
+                <i className="fas fa-users"></i>
+                <span className="link-text">Users</span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/reports" className="sidebar-link">
+                <i className="fas fa-file-alt"></i>
+                <span className="link-text">Reports</span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/notifications" className="sidebar-link">
+                <i className="fas fa-bell"></i>
+                <span className="link-text">Notifications</span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/settings" className="sidebar-link">
+                <i className="fas fa-cog"></i>
+                <span className="link-text">Settings</span>
+              </NavLink>
+            </li>
+          </ul>
+        </nav>
+
+        {/* Footer */}
+        <div className="sidebar-footer">
+          <small>© {new Date().getFullYear()} StandardCharteredGBSBank</small>
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+
+Sidebar.css (Visually Enhanced + Bank Theme)
+/* === SIDEBAR BASE === */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 240px;
+  height: 100vh;
+  background: linear-gradient(180deg, #003b73 0%, #005fa3 100%);
+  color: #ffffff;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  overflow-y: auto;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Inner Grid */
+.sidebar-inner {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100%;
+}
+
+/* === LOGO AREA === */
+.sidebar-logo {
+  text-align: center;
+  padding: 25px 0 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-logo-img {
+  width: 110px;
+  height: auto;
+  border-radius: 6px;
+  background: #fff;
+  padding: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-title {
+  color: #d0e7ff;
+  font-size: 14px;
+  margin-top: 8px;
+  letter-spacing: 0.5px;
+}
+
+/* === NAVIGATION LINKS === */
+.sidebar-nav {
+  margin-top: 15px;
+}
+
+.sidebar-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #ffffff;
+  padding: 12px 22px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 15px;
+  border-radius: 8px;
+  transition: background 0.3s, transform 0.2s, color 0.3s;
+}
+
+.sidebar-link i {
+  width: 18px;
+  font-size: 16px;
+}
+
+.sidebar-link:hover {
+  background: rgba(56, 210, 0, 0.15);
+  color: #38d200;
+  transform: translateX(6px);
+}
+
+/* === ACTIVE STATE (Optional Highlight for current page) === */
+.sidebar-link.active {
+  background: rgba(56, 210, 0, 0.2);
+  border-left: 4px solid #38d200;
+  color: #38d200;
+}
+
+/* === FOOTER === */
+.sidebar-footer {
+  text-align: center;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  padding: 15px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+
+Optional (To Enable Icons)
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
