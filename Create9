@@ -1,0 +1,259 @@
+Updated Navbar.js (with Admin Dropdown Menu)
+import React, { useState, useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
+import "./Navbar.css";
+import download from "../../Data/download.png"; // ✅ update path as per your project
+import adminIcon from "../../Data/admin.png"; // ✅ place an admin image in your /Data folder
+
+export default function Navbar() {
+  const [open, setOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  return (
+    <header className="navbar">
+      <div className="navbar-container">
+        {/* ==== LEFT: LOGO ==== */}
+        <div className="navbar-brand">
+          <img src={download} alt="Standard Chartered GBS" className="img" />
+          <Link to="/" className="brand-link">
+            Standard Chartered GBS
+          </Link>
+        </div>
+
+        {/* ==== CENTER: NAV LINKS ==== */}
+        <nav className="navbar-nav">
+          <ul className="nav-items">
+            <li>
+              <Link to="/home">Home</Link>
+            </li>
+            <li>
+              <Link to="/dashboard">Dashboard</Link>
+            </li>
+            <li>
+              <Link to="/admin">Admin</Link>
+            </li>
+          </ul>
+        </nav>
+
+        {/* ==== RIGHT: ADMIN MENU ==== */}
+        <div className="navbar-actions" ref={dropdownRef}>
+          <div className="admin-profile" onClick={() => setOpen(!open)}>
+            <img src={adminIcon} alt="Admin" className="admin-avatar" />
+            <span className="admin-name">Admin</span>
+            <i className={`arrow ${open ? "up" : "down"}`}></i>
+          </div>
+
+          {open && (
+            <div className="dropdown-menu">
+              <Link to="/settings" className="dropdown-item">
+                ⚙️ Settings
+              </Link>
+              <hr />
+              <Link to="/logout" className="dropdown-item logout">
+                🚪 Logout
+              </Link>
+            </div>
+          )}
+        </div>
+      </div>
+    </header>
+  );
+}
+
+
+Updated Navbar.css (Visually Stunning + Dropdown Animation)
+/* === Navbar.css — Modern Gradient Navbar with Dropdown === */
+
+/* Wrapper */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background: linear-gradient(90deg, #002147, #004080);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  z-index: 99;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Container */
+.navbar-container {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  width: 100%;
+  padding: 0 40px;
+  box-sizing: border-box;
+}
+
+/* ==== Brand Section ==== */
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.img {
+  height: 45px;
+  width: auto;
+  border-radius: 4px;
+}
+
+.brand-link {
+  font-size: 20px;
+  font-weight: 600;
+  color: #ffffff;
+  text-decoration: none;
+  letter-spacing: 0.4px;
+  transition: color 0.3s ease;
+}
+
+.brand-link:hover {
+  color: #38d200;
+}
+
+/* ==== Navbar Center Links ==== */
+.navbar-nav {
+  text-align: center;
+}
+
+.navbar-nav .nav-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-nav .nav-items li {
+  display: inline-block;
+  margin: 0 20px;
+}
+
+.navbar-nav .nav-items a {
+  color: #ffffff;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  font-size: 15px;
+}
+
+.navbar-nav .nav-items a:hover {
+  color: #38d200;
+}
+
+/* ==== Right Side: Admin Dropdown ==== */
+.navbar-actions {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.admin-profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #ffffff;
+  cursor: pointer;
+  transition: 0.3s;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 6px 12px;
+  border-radius: 20px;
+}
+
+.admin-profile:hover {
+  background: rgba(56, 210, 0, 0.2);
+}
+
+.admin-avatar {
+  height: 35px;
+  width: 35px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+}
+
+.admin-name {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.arrow {
+  margin-left: 4px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  display: inline-block;
+  padding: 4px;
+  transition: transform 0.3s ease;
+}
+
+.arrow.down {
+  transform: rotate(45deg);
+}
+
+.arrow.up {
+  transform: rotate(-135deg);
+}
+
+/* ==== Dropdown Menu ==== */
+.dropdown-menu {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  background: #ffffff;
+  color: #003366;
+  border-radius: 8px;
+  width: 160px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+  animation: fadeIn 0.3s ease;
+  overflow: hidden;
+}
+
+.dropdown-item {
+  display: block;
+  padding: 10px 16px;
+  font-size: 14px;
+  color: #003366;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+
+.dropdown-item:hover {
+  background: rgba(0, 59, 115, 0.08);
+}
+
+.dropdown-item.logout {
+  color: #d90429;
+  font-weight: 600;
+}
+
+.dropdown-item.logout:hover {
+  background: rgba(217, 4, 41, 0.1);
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
