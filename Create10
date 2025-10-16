@@ -1,0 +1,363 @@
+src/components/AccessConfiguration.js
+import React, { useState } from "react";
+import "./AccessConfiguration.css";
+
+export default function AccessConfiguration() {
+  // Existing assigned users
+  const initialRows = [
+    {
+      id: 1,
+      adGroup: "Wealth Compliance",
+      folder: "Compliance",
+      reports: ["KYC Reports", "Dormant Reports", "AML Reports"],
+      assignedTo: "Swapnil",
+      date: "2025-10-11",
+    },
+    {
+      id: 2,
+      adGroup: "Wealth User",
+      folder: "Global User",
+      reports: ["Active User", "Inactive User"],
+      assignedTo: "Sarvesh",
+      date: "2025-10-12",
+    },
+  ];
+
+  const [rows, setRows] = useState(initialRows);
+  const [notifications, setNotifications] = useState([
+    {
+      id: 101,
+      username: "ayush.s",
+      adGroup: "Risk Team",
+      date: "2025-10-13",
+      status: "Pending",
+    },
+    {
+      id: 102,
+      username: "megha.k",
+      adGroup: "Wealth User",
+      date: "2025-10-14",
+      status: "Pending",
+    },
+  ]);
+
+  const [showNotifications, setShowNotifications] = useState(false);
+
+  // Handle Accept / Revoke
+  const handleAction = (id, action) => {
+    setNotifications((prev) =>
+      prev.map((n) =>
+        n.id === id
+          ? { ...n, status: action === "accept" ? "Accepted" : "Revoked" }
+          : n
+      )
+    );
+  };
+
+  return (
+    <section className="ac-wrapper" role="region" aria-label="Access Configuration">
+      <div className="ac-card">
+        {/* ==== HEADER ==== */}
+        <header className="ac-header">
+          <div className="ac-title">Access Configuration</div>
+
+          <div className="ac-user">
+            {/* Notification Bell */}
+            <div className="ac-notify" onClick={() => setShowNotifications(!showNotifications)}>
+              🔔
+              {notifications.filter((n) => n.status === "Pending").length > 0 && (
+                <span className="ac-notify-badge">
+                  {notifications.filter((n) => n.status === "Pending").length}
+                </span>
+              )}
+            </div>
+
+            {/* Dropdown List */}
+            {showNotifications && (
+              <div className="ac-dropdown">
+                <div className="ac-dropdown-header">User Requests</div>
+                {notifications.length === 0 ? (
+                  <div className="ac-empty">No pending requests.</div>
+                ) : (
+                  notifications.map((n) => (
+                    <div key={n.id} className="ac-notify-item">
+                      <div>
+                        <strong>{n.username}</strong> → {n.adGroup}
+                        <div className="ac-date">{n.date}</div>
+                      </div>
+                      <div className="ac-actions">
+                        {n.status === "Pending" ? (
+                          <>
+                            <button
+                              className="ac-accept"
+                              onClick={() => handleAction(n.id, "accept")}
+                            >
+                              Accept
+                            </button>
+                            <button
+                              className="ac-revoke"
+                              onClick={() => handleAction(n.id, "revoke")}
+                            >
+                              Revoke
+                            </button>
+                          </>
+                        ) : (
+                          <span
+                            className={`ac-status ${
+                              n.status === "Accepted" ? "green" : "red"
+                            }`}
+                          >
+                            {n.status}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+
+            <div className="ac-user-name">Admin</div>
+            <div className="ac-avatar" />
+          </div>
+        </header>
+
+        {/* ==== TABLE ==== */}
+        <div className="ac-table-wrap">
+          <table className="ac-table" role="table">
+            <thead>
+              <tr>
+                <th>AD Group Name</th>
+                <th>Folder</th>
+                <th>Report Name(s)</th>
+                <th>Assigned To</th>
+                <th>Assigned Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr key={row.id}>
+                  <td className="ac-strong">{row.adGroup}</td>
+                  <td>{row.folder}</td>
+                  <td>
+                    {row.reports.map((r, i) => (
+                      <div key={i} className="ac-report-item">
+                        {r}
+                      </div>
+                    ))}
+                  </td>
+                  <td>{row.assignedTo}</td>
+                  <td>{row.date}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="ac-help">
+            Tip: AD Group configurations are synced from Active Directory.
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
+src/components/AccessConfiguration.css (Updated + Visually Stunning)
+/* === Access Configuration (Enhanced with Notifications) === */
+
+.ac-wrapper {
+  box-sizing: border-box;
+  padding: 24px;
+  min-height: calc(100vh - 104px);
+  background: #f3f6fa;
+}
+
+/* === Card === */
+.ac-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* === Header === */
+.ac-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  padding: 18px 24px;
+  background: linear-gradient(90deg, #002147, #004080);
+  color: white;
+  position: relative;
+}
+
+.ac-title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.ac-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+}
+
+.ac-user-name {
+  font-size: 14px;
+  color: #ffffffcc;
+}
+
+.ac-avatar {
+  width: 36px;
+  height: 36px;
+  background: #ffffff33;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+/* === Notification Bell === */
+.ac-notify {
+  position: relative;
+  font-size: 22px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.ac-notify:hover {
+  transform: scale(1.1);
+}
+
+.ac-notify-badge {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  background: #ff3b30;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 999px;
+}
+
+/* === Dropdown === */
+.ac-dropdown {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  background: white;
+  color: #1e293b;
+  width: 320px;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  animation: fadeIn 0.3s ease;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.ac-dropdown-header {
+  background: #003366;
+  color: white;
+  padding: 10px 16px;
+  font-weight: 600;
+}
+
+.ac-notify-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ac-notify-item:hover {
+  background: #f9fafb;
+}
+
+.ac-date {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.ac-actions button {
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.ac-accept {
+  background: #38d200;
+  color: white;
+  margin-right: 6px;
+}
+
+.ac-revoke {
+  background: #ef4444;
+  color: white;
+}
+
+.ac-status {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.ac-status.green {
+  color: #22c55e;
+}
+
+.ac-status.red {
+  color: #ef4444;
+}
+
+/* === Table === */
+.ac-table-wrap {
+  padding: 20px;
+}
+
+.ac-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ac-table th {
+  background: #f1f5f9;
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.ac-table td {
+  padding: 10px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.ac-strong {
+  font-weight: 600;
+  color: #003366;
+}
+
+.ac-help {
+  margin-top: 10px;
+  color: #64748b;
+  font-size: 13px;
+  text-align: center;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
