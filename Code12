@@ -1,0 +1,263 @@
+Package: com.example.wealthcore.model
+package com.example.wealthcore.model;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "file_requests")
+public class FileEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "unique_id", nullable = false)
+    private String uniqueId;
+
+    @Column(nullable = false)
+    private String action;
+
+    @Column(name = "input_file_name", nullable = false)
+    private String inputFileName;
+
+    @Column(name = "file_type", nullable = false)
+    private String fileType;
+
+    @Column(name = "output_folder_path", nullable = false)
+    private String outputFolderPath;
+
+    public FileEntity() {}
+
+    public FileEntity(String uniqueId, String action, String inputFileName, String fileType, String outputFolderPath) {
+        this.uniqueId = uniqueId;
+        this.action = action;
+        this.inputFileName = inputFileName;
+        this.fileType = fileType;
+        this.outputFolderPath = outputFolderPath;
+    }
+
+    // Getters and Setters
+
+    public Long getId() { return id; }
+
+    public String getUniqueId() { return uniqueId; }
+    public void setUniqueId(String uniqueId) { this.uniqueId = uniqueId; }
+
+    public String getAction() { return action; }
+    public void setAction(String action) { this.action = action; }
+
+    public String getInputFileName() { return inputFileName; }
+    public void setInputFileName(String inputFileName) { this.inputFileName = inputFileName; }
+
+    public String getFileType() { return fileType; }
+    public void setFileType(String fileType) { this.fileType = fileType; }
+
+    public String getOutputFolderPath() { return outputFolderPath; }
+    public void setOutputFolderPath(String outputFolderPath) { this.outputFolderPath = outputFolderPath; }
+}
+
+
+⸻
+
+📦 2️⃣ RequestDetailsDTO.java
+
+Package: com.example.wealthcore.dto
+
+package com.example.wealthcore.dto;
+
+public class RequestDetailsDTO {
+
+    private String uniqueId;
+    private String action;
+    private String inputFileName;
+    private String fileType;
+    private String outputFolderPath;
+
+    public String getUniqueId() { return uniqueId; }
+    public void setUniqueId(String uniqueId) { this.uniqueId = uniqueId; }
+
+    public String getAction() { return action; }
+    public void setAction(String action) { this.action = action; }
+
+    public String getInputFileName() { return inputFileName; }
+    public void setInputFileName(String inputFileName) { this.inputFileName = inputFileName; }
+
+    public String getFileType() { return fileType; }
+    public void setFileType(String fileType) { this.fileType = fileType; }
+
+    public String getOutputFolderPath() { return outputFolderPath; }
+    public void setOutputFolderPath(String outputFolderPath) { this.outputFolderPath = outputFolderPath; }
+}
+FileRepository.java
+
+Package: com.example.wealthcore.repository
+
+package com.example.wealthcore.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import com.example.wealthcore.model.FileEntity;
+
+public interface FileRepository extends JpaRepository<FileEntity, Long> {
+}
+
+FileProcessingService.java
+
+Package: com.example.wealthcore.service
+package com.example.wealthcore.service;
+
+import org.springframework.stereotype.Service;
+import com.example.wealthcore.dto.RequestDetailsDTO;
+import com.example.wealthcore.model.FileEntity;
+import com.example.wealthcore.repository.FileRepository;
+
+@Service
+public class FileProcessingService {
+
+    private final FileRepository fileRepository;
+
+    public FileProcessingService(FileRepository fileRepository) {
+        this.fileRepository = fileRepository;
+    }
+
+    public void processRequest(RequestDetailsDTO dto) {
+        FileEntity entity = new FileEntity(
+                dto.getUniqueId(),
+                dto.getAction(),
+                dto.getInputFileName(),
+                dto.getFileType(),
+                dto.getOutputFolderPath()
+        );
+        fileRepository.save(entity);
+        System.out.println("✅ File request saved for: " + dto.getInputFileName());
+    }
+}
+
+FileWatcherService.java
+
+Package: com.example.wealthcore.service
+
+package com.example.wealthcore.service;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import jakarta.annotation.PostConstruct;
+import java.io.IOException;
+import java.nio.file.*;
+import com.example.wealthcore.dto.RequestDetailsDTO;
+
+@Service
+public class FileWatcherService {
+
+    @Value("${watch.folder.path}")
+    private String folderPath;
+
+    private final FileProcessingService fileProcessingService;
+
+    public FileWatcherService(FileProcessingService fileProcessingService) {
+        this.fileProcessingService = fileProcessingService;
+    }
+
+    @PostConstruct
+    public void startWatching() {
+        new Thread(this::watchDirectory).start();
+    }
+
+    private void watchDirectory() {
+        try {
+            WatchService watchService = FileSystems.getDefault().newWatchService();
+            Path path = Paths.get(folderPath);
+            path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
+
+            System.out.println("👀 Watching folder: " + path);
+
+            WatchKey key;
+            while ((key = watchService.take()) != null) {
+                for (WatchEvent<?> event : key.pollEvents()) {
+                    String fileName = event.context().toString();
+                    System.out.println("📁 New file detected: " + fileName);
+
+                    RequestDetailsDTO dto = new RequestDetailsDTO();
+                    dto.setUniqueId(java.util.UUID.randomUUID().toString());
+                    dto.setAction("NEW");
+                    dto.setInputFileName(fileName);
+                    dto.setFileType("CSV");
+                    dto.setOutputFolderPath("SG/Retail/Customer");
+
+                    fileProcessingService.processRequest(dto);
+                }
+                key.reset();
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+FileRequestController.java
+
+Package: com.example.wealthcore.controller
+package com.example.wealthcore.controller;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import com.example.wealthcore.dto.RequestDetailsDTO;
+import com.example.wealthcore.service.FileProcessingService;
+
+@RestController
+@RequestMapping("/api/files")
+public class FileRequestController {
+
+    private final FileProcessingService fileProcessingService;
+
+    public FileRequestController(FileProcessingService fileProcessingService) {
+        this.fileProcessingService = fileProcessingService;
+    }
+
+    @PostMapping("/receive")
+    public ResponseEntity<String> receiveFileDetails(@RequestBody RequestDetailsDTO requestDetails) {
+        fileProcessingService.processRequest(requestDetails);
+        return ResponseEntity.ok("✅ Request details received and saved successfully");
+    }
+}
+WealthCoreApplication.java
+
+Package: com.example.wealthcore
+package com.example.wealthcore;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class WealthCoreApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(WealthCoreApplication.class, args);
+    }
+}
+application.properties
+
+Location: src/main/resources/application.properties
+
+# PostgreSQL Config
+spring.datasource.url=jdbc:postgresql://localhost:5432/wealthcore
+spring.datasource.username=postgres
+spring.datasource.password=your_password
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+
+# Folder Path to Watch
+watch.folder.path=C:/watched_folder
+
+CREATE TABLE file_requests (
+    id SERIAL PRIMARY KEY,
+    unique_id VARCHAR(100) NOT NULL,
+    action VARCHAR(20) NOT NULL,
+    input_file_name VARCHAR(255) NOT NULL,
+    file_type VARCHAR(50) NOT NULL,
+    output_folder_path VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
+
+
